@@ -4,6 +4,7 @@
 
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
+import dataSource
 
 # Flask初始化参数尽量使用你的包名，这个初始化方式是官方推荐的，官方解释：http://flask.pocoo.org/docs/0.12/api/#flask.Flask
 app = Flask(__name__)
@@ -54,12 +55,15 @@ class Teacher(Resource):
 # shows a list of all todos, and lets you POST to add new tasks
 class AllTeacher(Resource):
     def get(self):
-        return teachers
+        # return teachers
+        db = dataSource.Database(**dataSource.connect['中心库'])
+        t = db.query("SELECT * FROM DLAKE_PERSONNEL_TEACHER WHERE GH='2010800037'")
+        return t
 
 
-## Actually setup the Api resource routing here
+# 配置路由
 api.add_resource(AllTeacher, '/teacher')
 api.add_resource(Teacher, '/teacher/<tid>')
 
 if __name__ == '__main__':
-    app.run(host='192.168.14.200', debug=True)
+    app.run(host='192.168.2.200', debug=True)
